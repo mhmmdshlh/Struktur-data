@@ -18,7 +18,7 @@ struct queue{
         bool isFull(){
             return (rear+1)%size == front;
         }
-        void enqueue(int val){
+        void enqueue(char val){
             if(isFull()) return;
             if(isEmpty()){
                 front = rear = 0;
@@ -46,24 +46,25 @@ struct queue{
             }
             cout << items[rear] << '\n';
         }
+        string getItem(){
+            if(isEmpty()) return "";
+            string item = "";
+            for(int i=front; i!=rear; i=(i+1)%size){
+                item += items[i];
+            }
+            item += items[rear];
+            return item;
+        }
 };
 
-string stringReverse(string s){
-    string result = "";
-    for(int i=s.size()-1; i>=0; i--){
-        result += s[i];
-    }
-    return result;
-}
-
 string decToBin(int x){
+    if (x == 0) return "0";
     string bin = "";
-    while(x>0){
-        int digit = x%2;
-        bin += (digit + '0');
+    while (x > 0) {
+        char digit = x % 2 == 0 ? '0' : '1';
+        bin = digit + bin;
         x /= 2;
     }
-    bin = stringReverse(bin);
     return bin;
 }
 int pangkat(int n, int a){
@@ -76,29 +77,21 @@ int pangkat(int n, int a){
 }
 int binToDec(string bin){
     int result = 0;
-    bin = stringReverse(bin);
     for(int i=0; i<bin.size(); i++){
         int dgt = bin[i]=='0'? 0 : 1;
-        result += dgt*pangkat(2, i);
+        result += dgt*pangkat(2, bin.size()-1-i);
     }
     return result;
 }
 void shiftBin(int& x, int shift){
     string bin = decToBin(x);
-    string result = "";
     queue q(bin.size());
     for(int i=0; i<bin.size(); i++){
         q.enqueue(bin[i]);
     }
-    for(int i=shift;i<q.size; i++){
-        char temp = q.dequeue();
-        q.enqueue(temp);
-    }
-    for(int i=0; i<q.size; i++){
-        result += q.dequeue();
-    }
-    
-    x = binToDec(result);
+    q.front = (q.front +(q.size - shift)) % q.size;
+    q.rear = (q.rear + (q.size - shift)) % q.size;
+    x = binToDec(q.getItem());
 }
 
 int main(){
@@ -108,7 +101,7 @@ int main(){
     cout << "Masukkan jumlah shift: ";
     cin >> shift;
     shiftBin(x, shift);
-    cout << "Bilangan desimal setelah shift: " << x << endl;
-    
+    cout << "Bilangan desimal setelah shift: " << x << endl;    
+
     return 0;
 }
