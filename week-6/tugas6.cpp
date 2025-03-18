@@ -84,13 +84,15 @@ int binToDec(string bin){
     return result;
 }
 void shiftBin(int& x, int shift){
+    if (x == 0) return;
     string bin = decToBin(x);
+    while(shift < 0) shift+=bin.size();
+    shift = shift % bin.size();
     queue q(bin.size());
     for(int i=0; i<bin.size(); i++){
-        q.enqueue(bin[i]);
+        int idx = ((i-shift + bin.size()) % bin.size());
+        q.enqueue(bin[idx]);
     }
-    q.front = (q.front +(q.size - shift)) % q.size;
-    q.rear = (q.rear + (q.size - shift)) % q.size;
     x = binToDec(q.getItem());
 }
 
