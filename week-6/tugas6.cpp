@@ -39,13 +39,6 @@ struct queue{
             }
             return item;
         }
-        void print(){
-            if(isEmpty()) return;
-            for(int i=front; i!=rear; i=(i+1)%size){
-                cout << items[i] << ' ';
-            }
-            cout << items[rear] << '\n';
-        }
         string getItem(){
             if(isEmpty()) return "";
             string item = "";
