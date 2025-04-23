@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 using namespace std;
 
 struct node {
@@ -125,6 +126,68 @@ public:
     tmp->next = curr->next;
     curr->next = tmp;
   }
+
+// tail not updated yet
+
+  void reverse() {
+    if(!head->next) return;
+    node* nxt = head->next;
+    head->next = nullptr;
+    while(nxt){
+        node* tmp = nxt->next;
+        nxt->next = head;
+        head = nxt;
+        nxt = tmp;
+    }
+  }
+
+  int getNode(int positionFromTail) {
+    node* nxt = head->next;
+    node* cur = head;
+    cur->next = nullptr;
+    while(nxt){
+        node* tmp = nxt->next;
+        nxt->next = cur;
+        cur = nxt;
+        nxt = tmp;
+    }
+    int i = 0;
+    while(cur){
+        if(i == positionFromTail){
+            return cur->value;
+        }
+        cur = cur->next;
+        i++;
+    }
+    return 0;
+  }
+
+  void removeDuplicates() {
+    node* cur = head;
+    while(cur && cur->next){
+        if(cur->value == cur->next->value){
+            node* next = cur->next->next;
+            delete cur->next;
+            cur->next = next;
+        } else{
+            cur = cur->next;
+        }
+    }
+  }
+
+  bool has_cycle() {
+    node* cur = head;
+    vector<node*> traversed = {};
+    while(cur){
+        for(int i=0; i<traversed.size(); i++){
+            if(cur->next == traversed[i]) return 1;
+        }
+        traversed.push_back(cur->next);
+        cur = cur->next;
+    }
+    return 0;   
+  }
+
 };
 
 int main() {
@@ -144,12 +207,7 @@ int main() {
   list.print();
   list.del(1);
   list.print();
-  list.del_last();
-  list.del_last();
-  list.del_last();
-  list.del_last();
-  list.del_last();
-  list.print();
-
+  cout << list.getNode(2);
+ 
   return 0;
 }

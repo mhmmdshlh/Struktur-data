@@ -3,18 +3,19 @@
 using namespace std;
 
 #define MAX 10
+template <typename T>
 struct Stack {
-  char count;
-  char* item;
+  T count;
+  T* item;
   Stack() {
     count = -1;
-    item = new char[MAX - 1];
+    item = new T[MAX - 1];
   }
   ~Stack() { delete[] item; }
 
   bool empty() { return count == -1; }
   bool full() { return count == MAX - 1; }
-  void push(char x) {
+  void push(T x) {
     if (full()) {
       cout << "full!\n";
     }
@@ -23,17 +24,17 @@ struct Stack {
       item[count] = x;
     }
   }
-  char pop() {
+  T pop() {
     if (empty()) {
       exit(EXIT_FAILURE);
     }
     else {
-      char tmp = item[count];
+      T tmp = item[count];
       count--;
       return tmp;
     }
   }
-  char top() {
+  T top() {
     if (empty()) {
       exit(EXIT_FAILURE);
     }
@@ -45,7 +46,7 @@ struct Stack {
       cout << "empty!\n";
     }
     else {
-      for (char i = 0; i <= count; i++) {
+      for (T i = 0; i <= count; i++) {
         cout << item[i] << ' ';
       }
       cout << '\n';
@@ -66,7 +67,7 @@ int priority(char x) {
 int main() {
   string s;
   getline(cin, s);
-  Stack st;
+  Stack<char> st;
   string result;
   for (int i = 0; i < s.length(); i++) {
     if (s[i] >= 'a' && s[i] <= 'z')

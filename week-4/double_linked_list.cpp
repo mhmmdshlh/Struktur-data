@@ -127,6 +127,16 @@ public:
     cur->prev = tmp;
     prev->next = tmp;
   }
+  void reverse() {
+    dnode* cur = head;
+    while(cur){
+        dnode* tmp = cur->next;
+        cur->next = cur->prev;
+        cur->prev = tmp;
+        if(!tmp) head = cur;
+        cur = tmp;
+    }
+  }
 };
 
 int main() {
@@ -142,6 +152,8 @@ int main() {
   list.del(12);
   list.print();
   list.insert(1, 9);
+  list.print();
+  list.reverse();
   list.print();
   return 0;
 }
