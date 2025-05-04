@@ -106,86 +106,182 @@ struct dllist{
         cout << "Nilai huruf: " << cur->nilaihuruf << endl;
     }
 
+    void swap_node(mhs* node1, mhs* node2){
+        if(!node1 || !node2 || node1 == node2) return;
+        
+        if(node1->next == node2){
+            if(node1->prev) node1->prev->next = node2;
+            if(node2->next) node2->next->prev = node1;
+
+            node1->next = node2->next;
+            node2->prev = node1->prev;
+            node1->prev = node2;
+            node2->next = node1;
+        }
+        else if(node2->next == node1){
+            if(node2->prev) node2->prev->next = node1;
+            if(node1->next) node1->next->prev = node2;
+    
+            node2->next = node1->next;
+            node1->prev = node2->prev;
+            node2->prev = node1;
+            node1->next = node2;
+        }
+        else{
+            mhs* next1 = node1->next;
+            mhs* prev1 = node1->prev;
+            mhs* next2 = node2->next;
+            mhs* prev2 = node2->prev;
+
+            if(prev1) prev1->next = node2;
+            if(next1) next1->prev = node2;
+            if(prev2) prev2->next = node1;
+            if(next2) next2->prev = node1;
+
+            node1->prev = prev2;
+            node1->next = next2;
+            node2->next = next1;
+            node2->prev = prev1;
+        }
+        if(head == node1) head = node2;
+        else if(head == node2) head = node1;
+        if(tail == node2) tail = node1;
+        else if(tail == node1) tail = node2;
+    }
+
     void bubble_sort(){
-        if(!head && !head->next) return;
+        if(!head || head == tail) return;
         mhs* back = tail;
         while(back != head){
             bool sorted = true;
             mhs* cur = head;
             while(cur != back){
                 if(cur->nim > cur->next->nim){
-                    mhs* tmp = cur->prev;
-                    mhs* nxt = cur->next;
-                    cur->prev = nxt;
-                    cur->next = nxt->next;
-                    nxt->next = cur;
-                    nxt->prev = tmp;
-                    if(tmp) tmp->next = nxt;
-                    if(cur == head) head = nxt;
-                    if(nxt == back) back = cur;
-                    if(nxt == tail) tail = cur;
+                    if(cur->next == back) back = cur;
+                    swap_node(cur, cur->next);
                     sorted = false;
                 }
-                else cur = cur->next;
+                else{
+                    cur = cur->next;
+                } 
             }
-            if(sorted) break;
             back = back->prev;
+            if(sorted) break;
         }
     }
 
     void selection_sort(){
-        if (!head && !head->next) return;
-        mhs* node = head;
-        while(node->next){
-            mhs* tmp = node;
-            mhs* cur = node->next;
-            while(cur){
-                if(cur->nim < tmp->nim){
-                    tmp = cur;
+        if (!head || head == tail) return;
+        mhs* curr = head;
+        while(curr->next){
+            mhs* min_node = curr;
+            mhs* tmp = curr->next;
+            while(tmp){
+                if(tmp->nim < min_node->nim){
+                    min_node = tmp;
                 }
-                cur = cur->next;
+                tmp = tmp->next;
             }
-            if(tmp != node){
-                mhs* prvtmp = tmp->prev;
-                mhs* nxttmp = tmp->next;
-                mhs* prvnode = node->prev;
-                mhs* nxtnode = node->next;
-                
-                if(node == head) head = tmp;
-                if(tmp == tail) tail = node;
-                
-                if(prvtmp == node){
-                    if(nxttmp) nxttmp->prev = node;
-                    if(prvnode) prvnode->next = tmp;
-                    tmp->next = node;
-                    tmp->prev = node->prev;
-                    node->next = nxttmp;
-                    node->prev = tmp;
-                }
-                else{
-                    if(prvtmp) prvtmp->next = node;
-                    if(nxttmp) nxttmp->prev = node;
-                    if(prvnode) prvnode->next = tmp;
-                    if(nxtnode) nxtnode->prev = tmp;
-                    tmp->next = node->next;
-                    tmp->prev = node->prev;
-                    node->next = nxttmp;
-                    node->prev = prvtmp;
-                }
-                node = tmp->next;
+            if(min_node != curr){
+                swap_node(curr, min_node);
+                curr = min_node->next;
             }
-            else node = node->next;
+            else curr = curr->next;
         }
     }
+
+    void insertion_sort(){
+        if(!head || head == tail) return;
+        mhs* cur = head->next;
+        while(cur){
+            mhs* p1 = cur;
+            mhs* nextcur = cur->next;
+            mhs* p2 = p1->prev;
+            while(p2){
+                if(p1->nim < p2->nim){
+                    swap_node(p1, p2);
+                    p2 = p1->prev;
+                }
+                else break;
+            }
+            cur = nextcur;
+        }
+    }
+
+    // void shell_sort(){
+    //     if(!head || head == tail) return;
+    //     int gap = jumlah/2;
+    //     while(gap > 0){
+    //         mhs* cur = head;
+    //         for(int i=0; i<gap; i++){
+    //             cur = cur->next;
+    //         }
+    //         while(cur){
+    //             mhs* curleft = cur;
+    //             mhs* curright = cur;
+    //             for(int i=0; i<gap; i++){
+    //                 curleft = curleft->prev;
+    //             }
+    //             while(curleft){
+    //                 if(curleft->nim > curright->nim){
+    //                     swap_node(curleft, curright);
+    
+    //                     cur = curleft;
+    
+    //                     curleft = curright;
+    
+    //                     for(int i=0; i<gap && curleft; i++){
+    //                         curleft = curleft->prev;
+    //                     }
+    //                 }
+    //                 else break;
+    //             }
+    //             cur = cur->next;
+    //         }
+    //         gap /= 2;
+    //     }
+    // }
+
+    void shell_sort(){
+        if(!head || head == tail) return;
+        mhs** arr = new mhs*[jumlah];
+        mhs* cur = head;
+        for(int i=0; i<jumlah; i++){
+            arr[i] = cur;
+            cur = cur->next;
+        }
+        
+        for(int gap=jumlah/2; gap > 0; gap/=2){
+            for(int i=gap; i<jumlah; i++){
+                for(int j=i; j>=gap && arr[j]->nim < arr[j-gap]->nim; j-=gap){
+                    mhs* tmp = arr[j];
+                    arr[j] = arr[j-gap];
+                    arr[j-gap] = tmp;
+                }
+            }
+        }
+
+        for(int i=0; i<jumlah; i++){
+            arr[i]->next = i<jumlah-1? arr[i+1] : nullptr;
+            arr[i]->prev = i>0? arr[i-1] : nullptr;
+        }
+
+        head = arr[0];
+        tail = arr[jumlah-1];
+
+        delete[] arr;
+    }
+
 };
 
 int main(){
     cout << "Program Pendataan Mahasiswa\n\n";
     dllist mahasiswa;
     mahasiswa.tambahData(205, "agus", 'L', 86);
-    mahasiswa.tambahData(203, "agung", 'L', 85);
+    mahasiswa.tambahData(204, "agung", 'L', 85);
     mahasiswa.tambahData(202, "asep", 'L', 80);
-    mahasiswa.tambahData(204, "wati", 'P', 89);
+    mahasiswa.tambahData(203, "wati", 'P', 89);
+    mahasiswa.tambahData(104, "yati", 'P', 90);
     while(true){
         cout << "1. Tambah data" << endl;
         cout << "2. Lihat data" << endl;
@@ -193,6 +289,8 @@ int main(){
         cout << "4. Cari mahasiswa" << endl;
         cout << "5. Bubble sort" << endl;
         cout << "6. Selection sort" << endl;
+        cout << "7. Insertion sort" << endl;
+        cout << "8. Shell sort" << endl;
         cout << "0. Keluar" << endl;
         int opt;
         cout << "pilih menu: ";
@@ -245,6 +343,12 @@ int main(){
         }
         else if(opt == 6){
             mahasiswa.selection_sort();
+        }
+        else if(opt == 7){
+            mahasiswa.insertion_sort();
+        }
+        else if(opt == 8){
+            mahasiswa.shell_sort();
         }
         else break;
     }
