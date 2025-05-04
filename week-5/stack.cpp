@@ -5,7 +5,7 @@ using namespace std;
 #define MAX 10
 template <typename T>
 struct Stack {
-  T count;
+  int count;
   T* item;
   Stack() {
     count = -1;
@@ -66,11 +66,13 @@ int priority(char x) {
 
 int main() {
   string s;
+  cout << "infix: "; 
   getline(cin, s);
   Stack<char> st;
   string result;
   for (int i = 0; i < s.length(); i++) {
-    if (s[i] >= 'a' && s[i] <= 'z')
+    if (s[i] == ' ') continue;
+    if (isalnum(s[i]))
       result += s[i];
     else if (s[i] == '(')
       st.push(s[i]);
@@ -90,7 +92,7 @@ int main() {
   while (!st.empty()) {
     result += st.pop();
   }
-  cout << result << '\n';
-
+  cout << "postfix: " << result << '\n';
+  
   return 0;
 }
