@@ -18,8 +18,6 @@ struct dllist {
     dnode* tail = nullptr;
     int jml = 0;
     bool sorted = false;
-    dnode* gaji_tertinggi;
-    dnode* gaji_terendah;
 
    public:
     void add(int id, string nama, int umur, string jabatan, int gaji) {
@@ -31,15 +29,11 @@ struct dllist {
         tmp->gaji = gaji;
         if (!head) {
             head = tail = tmp;
-            gaji_terendah = gaji_tertinggi = tmp;
         }
         else {
             tail->next = tmp;
             tmp->prev = tail;
             tail = tmp;
-
-            if (gaji < gaji_terendah->gaji) gaji_terendah = tmp;
-            if (gaji > gaji_tertinggi->gaji) gaji_tertinggi = tmp;
         }
         jml++;
         sorted = false;
@@ -65,9 +59,11 @@ struct dllist {
             if (cur->id == id) {
                 if (cur->prev) cur->prev->next = cur->next;
                 if (cur->next) cur->next->prev = cur->prev;
-                if (cur == head) head == cur->next;
-                if (cur == tail) tail == cur->prev;
+                if (cur == head) head = cur->next;
+                if (cur == tail) tail = cur->prev;
                 delete cur;
+                jml--;
+                sorted = false;
                 cout << "\nPegawai dengan ID " << id << " berhasil dihapus!\n\n";
                 return;
             }
@@ -98,8 +94,9 @@ struct dllist {
                 cin >> data;
                 if (opt == 1)
                     cur->umur = data;
-                else if (opt == 2)
+                else if (opt == 2) {
                     cur->gaji = data;
+                }
                 cout << "data berhasil diperbarui!\n\n";
                 return;
             }
@@ -169,11 +166,37 @@ struct dllist {
         sorted = true;
     }
 
+    dnode* _gaji_tertinggi() {
+        dnode* cur = head;
+        dnode* gaji_tertinggi = head;
+        while (cur) {
+            if (cur->gaji > gaji_tertinggi->gaji) gaji_tertinggi = cur;
+            cur = cur->next;
+        }
+        return gaji_tertinggi;
+    }
+
+    dnode* _gaji_terendah() {
+        dnode* cur = head;
+        dnode* gaji_terendah = head;
+        while (cur) {
+            if (cur->gaji < gaji_terendah->gaji) gaji_terendah = cur;
+            cur = cur->next;
+        }
+        return gaji_terendah;
+    }
+
     void stat() {
+        if (!head) {
+            cout << "\nData kosong!\n";
+            return;
+        }
+        dnode* gaji_tertinggi = _gaji_tertinggi();
+        dnode* gaji_terendah = _gaji_terendah();
         cout << "\nJumlah data: " << jml << " pegawai\n";
         cout << "gaji tertinggi: " << gaji_tertinggi->gaji << endl;
         cout << "gaji terendah: " << gaji_terendah->gaji << endl;
-        int total_gaji = 0;
+        float total_gaji = 0;
         dnode* cur = head;
         while (cur) {
             total_gaji += cur->gaji;
