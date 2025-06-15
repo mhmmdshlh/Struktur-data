@@ -82,22 +82,44 @@ struct dllist {
                 cout << "Jabatan : " << cur->jabatan << endl;
                 cout << "Gaji    : " << cur->gaji << '\n';
                 int opt;
-                cout << "mau update apa? (1. umur, 2. gaji): ";
+                cout << "mau update apa? (1. id, 2. nama, 3. umur, 4. jabatan, 5. gaji): ";
                 cin >> opt;
-                while (opt != 1 && opt != 2) {
+                while (opt != 1 && opt != 2 && opt != 3 && opt != 4 && opt != 5) {
                     cout << "tidak ada di pilihan!\n";
-                    cout << "mau update apa? (1. umur, 2. gaji): ";
+                    cout << "mau update apa? (1. id, 2. nama, 3. umur, 4. jabatan, 5. gaji): ";
                     cin >> opt;
                 }
-                int data;
-                cout << "masukkan nilai baru: ";
-                cin >> data;
-                if (opt == 1)
-                    cur->umur = data;
+                if (opt == 1) {
+                    int data;
+                    cout << "Masukkan id baru: ";
+                    cin >> data;
+                    cur->id = data;
+                }
                 else if (opt == 2) {
+                    string data;
+                    cout << "Masukkan nama baru: ";
+                    cin >> data;
+                    cur->nama = data;
+                }
+                else if (opt == 3) {
+                    int data;
+                    cout << "Masukkan umur baru: ";
+                    cin >> data;
+                    cur->umur = data;
+                }
+                else if (opt == 4) {
+                    string data;
+                    cout << "Masukkan jabatan baru: ";
+                    cin >> data;
+                    cur->jabatan = data;
+                }
+                else if (opt == 5) {
+                    int data;
+                    cout << "Masukkan gaji baru: ";
+                    cin >> data;
                     cur->gaji = data;
                 }
-                cout << "data berhasil diperbarui!\n\n";
+                cout << "Data berhasil diperbarui!\n\n";
                 return;
             }
             cur = cur->next;
@@ -166,43 +188,25 @@ struct dllist {
         sorted = true;
     }
 
-    dnode* _gaji_tertinggi() {
-        dnode* cur = head;
-        dnode* gaji_tertinggi = head;
-        while (cur) {
-            if (cur->gaji > gaji_tertinggi->gaji) gaji_tertinggi = cur;
-            cur = cur->next;
-        }
-        return gaji_tertinggi;
-    }
-
-    dnode* _gaji_terendah() {
-        dnode* cur = head;
-        dnode* gaji_terendah = head;
-        while (cur) {
-            if (cur->gaji < gaji_terendah->gaji) gaji_terendah = cur;
-            cur = cur->next;
-        }
-        return gaji_terendah;
-    }
-
     void stat() {
         if (!head) {
             cout << "\nData kosong!\n";
             return;
         }
-        dnode* gaji_tertinggi = _gaji_tertinggi();
-        dnode* gaji_terendah = _gaji_terendah();
-        cout << "\nJumlah data: " << jml << " pegawai\n";
-        cout << "gaji tertinggi: " << gaji_tertinggi->gaji << endl;
-        cout << "gaji terendah: " << gaji_terendah->gaji << endl;
         float total_gaji = 0;
+        dnode* gaji_tertinggi = head;
+        dnode* gaji_terendah = head;
         dnode* cur = head;
         while (cur) {
             total_gaji += cur->gaji;
+            if (cur->gaji > gaji_tertinggi->gaji) gaji_tertinggi = cur;
+            if (cur->gaji > gaji_terendah->gaji) gaji_terendah = cur;
             cur = cur->next;
         }
         float aver = total_gaji / jml;
+        cout << "\nJumlah data: " << jml << " pegawai\n";
+        cout << "gaji tertinggi: " << gaji_tertinggi->gaji << endl;
+        cout << "gaji terendah: " << gaji_terendah->gaji << endl;
         cout << "rata-rata gaji: " << aver << "\n\n";
     }
 };
